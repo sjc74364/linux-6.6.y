@@ -507,6 +507,12 @@
 };
 
 &i2c1 {
+    clocks = <&cru SCLK_I2C1>, <&cru PCLK_I2C1>;
+	clock-names = "i2c", "pclk";
+	i2c-scl-rising-time-ns = <600>;
+	i2c-scl-falling-time-ns = <15>;
+	i2c_scl_falling-time-ns = <20>;
+	clock-frequency = <100000>;
     status = "okay";
 
     es8388: es8388@10 {
