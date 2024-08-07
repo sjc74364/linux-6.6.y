@@ -274,6 +274,7 @@
 };
 
 &hdmi_sound {
+    simple-audio-card,name = "rockchip,hdmi";
 	status = "okay";
 };
 
@@ -665,6 +666,47 @@
 
 &pwm2 {
 	status = "okay";
+};
+
+&pwm3 {
+    compatible = "rockchip,remotectl-pwm";
+	pinctrl-names = "active";
+	interrupts = <RK_PA0 61 IRQ_TYPE_LEVEL_HIGH 0>;
+	remote_pwm_id = <3>;
+	handle_cpu_id = <0>;
+	status = "okay";
+
+	ir_key0 {
+		rockchip,usercode = <0xff40>;
+		rockchip,key_table = 
+            <0xb2 KEY_POWER>,
+            <0xe5 KEY_HOME>,
+            <0xbd KEY_BACK>,
+            <0xba KEY_MENU>,
+            <0xf4 KEY_UP>,
+            <0xf1 KEY_DOWN>,
+            <0xef KEY_LEFT>,
+            <0xee KEY_RIGHT>,
+            <0xf2 KEY_ENTER>,
+            <0xf0 KEY_REPLY>,
+            <0xea KEY_VOLUMEUP>,
+            <0xe3 KEY_VOLUMEDOWN>,
+            <0xbc KEY_MUTE>,
+            <0xfe KEY_PROG2>,
+            <0xfd KEY_PROG3>,
+            <0xfc KEY_PROG4>,
+            <0xfb KEY_KP5>,
+            <0xfa KEY_KP6>,
+            <0xf9 KEY_KP7>,
+            <0xf8 KEY_KP8>,
+            <0xf7 KEY_KP9>,
+            <0xb6 KEY_F10>,
+            <0xff KEY_F11>,
+            <0xed KEY_F14>,
+            <0xaf KEY_POWER>,
+            <0x8b KEY_VOLUMEUP>,
+            <0xb9 KEY_VOLUMEDOWN>;
+	};
 };
 
 &saradc {
