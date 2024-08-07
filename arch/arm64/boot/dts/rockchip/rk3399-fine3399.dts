@@ -103,6 +103,42 @@
 		regulator-max-microvolt = <1400000>;
 		vin-supply = <&vcc_sys>;
 	};
+	
+	es8388_sound: es8388-sound {
+		compatible = "simple-audio-card";
+		simple-audio-card,format = "i2s";
+		simple-audio-card,name = "rockchip,es8388-codec";
+		simple-audio-card,mclk-fs = <256>;
+		simple-audio-card,widgets = "Microphone", "Mic Jack", "Headphone", "Headphone Jack";
+		simple-audio-card,routing = "Mic Jack", "MICBIAS1", "IN1P", "Mic Jack", "Headphone Jack", "HPOL", "Headphone Jack", "HPOR";
+		status = "okay";
+
+		simple-audio-card,cpu {
+			sound-dai = <&i2s1>;
+		};
+
+		simple-audio-card,codec {
+			sound-dai = <&es8388>;
+		};
+	};
+
+	rt5651_sound: rt5651-sound {
+		compatible = "simple-audio-card";
+		simple-audio-card,format = "i2s";
+		simple-audio-card,name = "realtek,rt5651-codec";
+		simple-audio-card,mclk-fs = <256>;
+		simple-audio-card,widgets = "Microphone", "Mic Jack", "Headphone", "Headphone Jack";
+		simple-audio-card,routing = "Mic Jack", "MICBIAS1", "IN1P", "Mic Jack", "Headphone Jack", "HPOL", "Headphone Jack", "HPOR";
+		status = "disabled";
+
+		simple-audio-card,cpu {
+			sound-dai = <&i2s1>;
+		};
+
+		simple-audio-card,codec {
+			sound-dai = <&rt5651>;
+		};
+	};
 
 	leds: gpio-leds {
 		compatible = "gpio-leds";
@@ -469,11 +505,47 @@
 	};
 };
 
+$i2c1 {
+    status = "okay";
+
+    es8388: es8388@10 {
+		#sound-dai-cells = <0x00>;
+		compatible = "everest,es8323";
+		reg = <0x10>;
+		clocks = <&cru SCLK_I2S_8CH_OUT>;
+		clock-names = "mclk";
+		pinctrl-names = "default";
+		pinctrl-0 = <&i2s_8ch_mclk>;
+		spk-con-gpio = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
+		hp-det-gpio = <&gpio4 RK_PD4 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+
+	rt5651: rt5651@1a {
+		#sound-dai-cells = <0x00>;
+		compatible = "realtek,rt5651";
+		reg = <0x1a>;
+		clocks = <&cru SCLK_I2S_8CH_OUT>;
+		clock-names = "mclk";
+		pinctrl-names = "default";
+		pinctrl-0 = <&i2s_8ch_mclk>;
+		spk-con-gpio = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+
+};
+
 // Used for HDMI
 &i2c3 {
 	i2c-scl-rising-time-ns = <450>;
 	i2c-scl-falling-time-ns = <15>;
 	status = "okay";
+};
+
+&i2s0 {
+    i2s_8ch_mclk: i2s-8ch-mclk {
+        rockchip,pins = <4 RK_PA0 1 &pcfg_pull_none>;
+    };
 };
 
 // HDMI sound
