@@ -861,7 +861,7 @@
 		max-speed = <4000000>;
 		uart_rts_gpios = <&gpio2 19 GPIO_ACTIVE_HIGH>;
     	pinctrl-names = "default", "rts_gpio";
-		pinctrl-0 = <&uart0_rts>;;
+		pinctrl-0 = <&uart0_rts>;
 		pinctrl-1 = <&uart0_gpios>;
 		vbat-supply = <&vcc3v3_sys>;
 		vddio-supply = <&vcc_1v8>;
