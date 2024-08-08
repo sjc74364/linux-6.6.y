@@ -620,6 +620,10 @@
 	};
 
 	bt {
+	    uart0_gpios: uart0-gpios {
+            rockchip,pins = <2 RK_PC3 0 &pcfg_pull_none>;
+        };
+        
 		bt_enable_h: bt-enable-h {
 			rockchip,pins = <0 RK_PB1 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
@@ -842,20 +846,23 @@
 };
 
 &uart0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
+	pinctrl-0 = <&uart0_xfer &uart0_cts>;
+	assigned-clocks = <&cru SRST_H_PERILP0_NOC>;
+	assigned-clock-parents = <&cru PLL_GPLL>;
 	status = "okay";
 
 	bluetooth {
-		compatible = "brcm,bcm43438-bt";
-		clocks = <&rk808 1>;
-		clock-names = "lpo";
+		compatible = "bluetooth-platdata";
+		clocks = <&rk808 PLL_APLLL>;
+		clock-names = "ext_clock";
 		device-wakeup-gpios = <&gpio2 RK_PD2 GPIO_ACTIVE_HIGH>;
 		host-wakeup-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
 		shutdown-gpios = <&gpio0 RK_PB1 GPIO_ACTIVE_HIGH>;
 		max-speed = <4000000>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&bt_host_wake_l &bt_wake_l &bt_enable_h>;
+		uart_rts_gpios = <&gpio2 19 GPIO_ACTIVE_HIGH>;
+    	pinctrl-names = "default", "rts_gpio";
+		pinctrl-0 = <&uart0_rts>;;
+		pinctrl-1 = <&uart0_gpios>;
 		vbat-supply = <&vcc3v3_sys>;
 		vddio-supply = <&vcc_1v8>;
 	};
