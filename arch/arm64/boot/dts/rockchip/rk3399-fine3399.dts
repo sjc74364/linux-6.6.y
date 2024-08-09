@@ -920,42 +920,21 @@
 };
 
 &usbdrd3_0 {
-	clocks = <&cru SCLK_USB3OTG0_REF>, <&cru SCLK_USB3OTG0_SUSPEND>, <&cru ACLK_USB3OTG0>, <&cru ACLK_USB3_GRF>;
-	clock-names = "ref_clk", "suspend_clk", "bus_clk", "grf_clk";
-	power-domains = <&power RK3399_PD_USB3>;
 	status = "okay";
 };
 
 &usbdrd_dwc3_0 {
-	snps,dis_enblslpm_quirk;
-	snps,dis-u2-freeclk-exists-quirk;
-	snps,dis_u2_susphy_quirk;
-	snps,dis-del-phy-power-chg-quirk;
-	snps,tx-ipgap-linecheck-dis-quirk;
-	snps,xhci-slow-suspend-quirk;
-	snps,xhci-trb-ent-quirk;
-	snps,usb3-warm-reset-on-resume-quirk;
-	maximum-speed = "high-speed";
 	status = "okay";
+	dr_mode = "host";
 };
 
 &usbdrd3_1 {
-	clocks = <&cru SCLK_USB3OTG1_REF>, <&cru SCLK_USB3OTG1_SUSPEND>, <&cru ACLK_USB3OTG1>, <&cru ACLK_USB3_GRF>;
-	clock-names = "ref_clk", "suspend_clk", "bus_clk", "grf_clk";
-	power-domains = <&power RK3399_PD_USB3>;
 	status = "okay";
 };
 
 &usbdrd_dwc3_1 {
-	snps,dis_enblslpm_quirk;
-	snps,dis-u2-freeclk-exists-quirk;
-	snps,dis_u2_susphy_quirk;
-	snps,dis-del-phy-power-chg-quirk;
-	snps,tx-ipgap-linecheck-dis-quirk;
-	snps,xhci-slow-suspend-quirk;
-	snps,xhci-trb-ent-quirk;
-	snps,usb3-warm-reset-on-resume-quirk;
 	status = "okay";
+	dr_mode = "host";
 };
 
 &vopb {
