@@ -272,6 +272,7 @@ static void rk_pwm_remotectl_do_something(unsigned long  data)
 	struct rkxx_remotectl_drvdata *ddata;
 
 	ddata = (struct rkxx_remotectl_drvdata *)data;
+	printk(0"xxx status=%x\n", (ddata->scandata>>8));
 	switch (ddata->state) {
 	case RMC_IDLE: {
 		;
@@ -296,6 +297,7 @@ static void rk_pwm_remotectl_do_something(unsigned long  data)
 		ddata->count++;
 		if (ddata->count == 0x10) {
 			DBG_CODE("USERCODE=0x%x\n", ddata->scandata);
+			printk(0"USERCODE=0x%x\n", ddata->scandata);
 			if (remotectl_keybd_num_lookup(ddata)) {
 				ddata->state = RMC_GETDATA;
 				ddata->scandata = 0;
@@ -319,6 +321,7 @@ static void rk_pwm_remotectl_do_something(unsigned long  data)
 		if (ddata->count < 0x10)
 			return;
 		DBG_CODE("RMC_GETDATA=%x\n", (ddata->scandata>>8));
+		printk(0"RMC_GETDATA=%x\n", (ddata->scandata>>8));
 		if ((ddata->scandata&0x0ff) ==
 		    ((~ddata->scandata >> 8) & 0x0ff)) {
 			if (remotectl_keycode_lookup(ddata)) {
