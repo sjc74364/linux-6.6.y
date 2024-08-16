@@ -44,14 +44,14 @@
 			wakeup-source;
 		};
 	};
-/*
+
 	ir-receiver {
 		compatible = "gpio-ir-receiver";
 		gpios = <&gpio0 RK_PA6 GPIO_ACTIVE_LOW>;
 		pinctrl-0 = <&ir_int>;
 		pinctrl-names = "default";
 	};
-*/
+
 	leds {
 		compatible = "gpio-leds";
 		pinctrl-names = "default";
@@ -63,6 +63,16 @@
 			linux,default-trigger = "heartbeat";
 			gpios = <&gpio3 RK_PD4 GPIO_ACTIVE_HIGH>; // bsp
 		};
+	};
+
+	/* not amplifier, used as switcher only */
+	headphones_amp: headphones-amp {
+		compatible = "simple-audio-amplifier";
+		pinctrl-names = "default";
+		pinctrl-0 = <&ear_ctl_pin>;
+		enable-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
+		sound-name-prefix = "Headphone Amp";
+		VCC-supply = <&vcc_3v0>;
 	};
 
 	sdio_pwrseq: sdio-pwrseq {
@@ -197,6 +207,36 @@
 	};
 */
 
+	es8388-sound {
+		compatible = "simple-audio-card";
+		pinctrl-names = "default";
+		pinctrl-0 = <&hp_det_pin>;
+		simple-audio-card,name = "rockchip,es8388-codec";
+		simple-audio-card,format = "i2s";
+		simple-audio-card,mclk-fs = <256>;
+		simple-audio-card,widgets =
+			"Microphone", "Mic Jack",
+			"Headphone", "Headphones";
+		simple-audio-card,routing =
+			"LINPUT1", "Mic Jack",
+			"Headphone Amp INL", "LOUT2",
+			"Headphone Amp INR", "ROUT2",
+			"Headphones", "Headphone Amp OUTL",
+			"Headphones", "Headphone Amp OUTR";
+		simple-audio-card,hp-det-gpio = <&gpio2 RK_PA6 GPIO_ACTIVE_HIGH>;
+		simple-audio-card,aux-devs = <&headphones_amp>;
+		simple-audio-card,pin-switches = "Headphones";
+
+		simple-audio-card,codec {
+			sound-dai = <&es8388>;
+		};
+
+		simple-audio-card,cpu {
+			sound-dai = <&i2s1>;
+		};
+	};
+
+/*
 	rt5651-sound {
 		status = "okay";
 		compatible = "simple-audio-card";
@@ -243,6 +283,8 @@
 		sound-name-prefix = "Speaker Amplifier";
 		vcc-supply = <&vcc5v0_sys>;
 	};
+*/
+
 /*
 	lcd_bl: lcd-bl {
 			compatible = "gpio-backlight";
@@ -544,6 +586,15 @@
 	i2c-scl-falling-time-ns = <15>;
 	status = "okay";
 
+	es8388: es8388@10 {
+		compatible = "everest,es8388", "everest,es8323";
+		reg = <0x10>;
+		clock-names = "mclk";
+		clocks = <&cru SCLK_I2S_8CH_OUT>;
+		#sound-dai-cells = <0>;
+	};
+
+/*
 	rt5651: rt5651@1a {
 		#sound-dai-cells = <0>;
 		compatible = "realtek,rt5651";
@@ -552,7 +603,9 @@
 		clock-names = "mclk";
 		status = "okay";
 	};
+*/
 };
+
 
 // HDMI
 &i2c3 {
@@ -649,12 +702,76 @@
 	status = "okay";
 };
 
+&pwm0 {
+	pinctrl-names = "active";
+	status = "okay";
+};
+
+&pwm1 {
+	pinctrl-names = "active";
+};
+
+&pwm2 {
+	pinctrl-names = "active";
+	status = "okay";
+};
+
+&pwm3 {
+	pinctrl-names = "active";
+	interrupts = <RK_PA0 61 IRQ_TYPE_LEVEL_LOW 0>;
+	remote_pwm_id = <3>;
+	handle_cpu_id = <0>;
+	status = "okay";
+
+	ir_key0 {
+		rockchip,usercode = <0xff40>;
+		rockchip,key_table = 
+            <0xb2 KEY_POWER>,
+            <0xe5 KEY_HOME>,
+            <0xbd KEY_BACK>,
+            <0xba KEY_MENU>,
+            <0xf4 KEY_UP>,
+            <0xf1 KEY_DOWN>,
+            <0xef KEY_LEFT>,
+            <0xee KEY_RIGHT>,
+            <0xf2 KEY_ENTER>,
+            <0xf0 KEY_REPLY>,
+            <0xea KEY_VOLUMEUP>,
+            <0xe3 KEY_VOLUMEDOWN>,
+            <0xbc KEY_MUTE>,
+            <0xfe KEY_PROG2>,
+            <0xfd KEY_PROG3>,
+            <0xfc KEY_PROG4>,
+            <0xfb KEY_KP5>,
+            <0xfa KEY_KP6>,
+            <0xf9 KEY_KP7>,
+            <0xf8 KEY_KP8>,
+            <0xf7 KEY_KP9>,
+            <0xb6 KEY_F10>,
+            <0xff KEY_F11>,
+            <0xed KEY_F14>,
+            <0xaf KEY_POWER>,
+            <0x8b KEY_VOLUMEUP>,
+            <0xb9 KEY_VOLUMEDOWN>;
+	};
+};
+
 &pmu_io_domains {
 	pmu1830-supply = <&vcc_3v0>; // bsp
 	status = "okay";
 };
 
 &pinctrl {
+	es8388 {
+		ear_ctl_pin: ear-ctl-pin {
+			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_output_high>;
+		};
+
+		hp_det_pin: hp-det-pin {
+			rockchip,pins = <2 RK_PA6 RK_FUNC_GPIO &pcfg_pull_down>;
+		};
+	};
+
 	bt {
 		bt_enable_h: bt-enable-h {
 			rockchip,pins = <0 RK_PB1 RK_FUNC_GPIO &pcfg_pull_none>; // bsp
