@@ -1,11 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0
 VERSION = 6
 PATCHLEVEL = 6
-<<<<<<< HEAD
-SUBLEVEL = 45
-=======
 SUBLEVEL = 46
->>>>>>> codesnas/main
 EXTRAVERSION =
 NAME = Hurr durr I'ma ninja sloth
 
